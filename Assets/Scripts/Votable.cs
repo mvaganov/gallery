@@ -8,7 +8,7 @@ public class Votable : MonoBehaviour {
 
 	TextSpace text;
 
-	public static Color defaultColor = new Color(0.75f, 0.75f, 0.75f);
+	//public static Color defaultColor = new Color(0.75f, 0.75f, 0.75f);
 
 	public TextSpace GetTextSpace() {
 		if (!text) {
@@ -25,8 +25,10 @@ public class Votable : MonoBehaviour {
 		Collider c = GetComponent<Collider> ();
 		if (!c) {
 			MeshFilter m = GetComponent<MeshFilter> ();
-			MeshCollider mc = gameObject.AddComponent<MeshCollider> ();
-			mc.sharedMesh = m.mesh;
+			if (m) {
+				MeshCollider mc = gameObject.AddComponent<MeshCollider> ();
+				mc.sharedMesh = m.mesh;
+			}
 			SphereCollider sc = gameObject.AddComponent<SphereCollider> ();
 			sc.radius = 3;
 			sc.isTrigger = true;
