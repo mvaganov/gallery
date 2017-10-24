@@ -42,7 +42,10 @@ public class Network : MonoBehaviour {
 	public void UpdateDjikstraDebug(){
 		Node nodeToDraw = GetNodeLabeled(showPathsFor);
 		if(nodeToDraw != null) {
-			navdata [nodeToDraw].CalcLines (ref pathLines);
+			Djikstra d;
+			if(navdata.TryGetValue(nodeToDraw, out d)) {
+				d.CalcLines (ref pathLines);
+			}
 		}
 	}
 
@@ -63,7 +66,13 @@ public class Network : MonoBehaviour {
 	}
 
 	// node cost increase
+	public void UpdateNodeCostIncrease(Node n) {
+
+	}
 	// node cost decrease
+	public void UpdateNodeCostDecrease(Node n) {
+		
+	}
 	// edge cost increase
 	public void UpdateEdgeCostIncrease(Node a_from, Node a_to) {
 		// recalculate all the nodes with paths that travel across the nodes in this edge

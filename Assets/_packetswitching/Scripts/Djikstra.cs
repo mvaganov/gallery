@@ -55,19 +55,21 @@ public class Djikstra {
 			while (Q.Count > 0 && iter++ < 100) {
 				//13 u ← vertex in Q with min dist[u]    // Node with the least distance will be selected first
 				Node u = MinDist(Q, dist);
+				if (u == null) {
+					Debug.LogError ("how on earth did a null get into the distance dictionary?");
+				}
 				//14 remove u from Q 
 				if (!Q.Remove (u)) {
 					Debug.Log ("woah, woah, woah.");
 				}
-				//					Debug.Log ("("+u+") "+Q.Count);
+				// Debug.Log ("("+u+") "+Q.Count);
 
 				//16 for each neighbor v of u:           // where v is still in Q.
-				//if(u.neighbors != null) {
 				for(int i = 0; i < u.edges.Count; ++i) {
 					Edge edge = u.edges [i];
 					Node v = edge.Other(u);
-					if (u == null) {
-						Debug.LogError ("");
+					if (v == null) {
+						Debug.LogError ("really? edge to knowhere? "+u.name+"'s edge "+i+" is bad.");
 					}
 					if (!edge.Has (u, v)) {
 						Debug.LogError ("BAD EDGE : "+u.name+" and "+v.name+" not both in edge "+edge);
@@ -82,7 +84,6 @@ public class Djikstra {
 						prev[v] = u;
 					}
 				}
-				//}
 			}
 		}
 		//22 return dist[], prev[]
@@ -176,7 +177,9 @@ public class Djikstra {
 		for (int i = 0; i < leafNodes.Count; ++i) {
 			Vector3[] path = PathAsPoints (leafNodes [i]);
 			GameObject go = pathlist [i];
-			LineRenderer lr = Lines.Make (ref go, path, path.Length, Color.red, 0, 1);
+			LineRenderer lr = Lines.Make (ref go, path, path.Length, Color.white, 0, 1);
+			lr.startColor = Color.cyan;
+			lr.endColor = Color.red;
 			lr.numCapVertices = 4;
 			lr.numCornerVertices = 4;
 			go.SetActive (true);
