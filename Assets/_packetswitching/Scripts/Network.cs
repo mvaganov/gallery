@@ -42,6 +42,7 @@ public class Network : MonoBehaviour {
 	public void UpdateDjikstraDebug(){
 		Node nodeToDraw = GetNodeLabeled(showPathsFor);
 		if(nodeToDraw != null) {
+			Debug.Log ("updating pathlines for "+nodeToDraw.name);
 			Djikstra d;
 			if(navdata.TryGetValue(nodeToDraw, out d)) {
 				d.CalcLines (ref pathLines);
@@ -91,7 +92,8 @@ public class Network : MonoBehaviour {
 		updated.Add (a_from);
 		updated.Add (a_to);
 
-		Djikstra d;
+		Debug.Log ("Breaking " + a_from.name + "->" + a_to.name);
+//		Djikstra d;
 		// updating the nav edge
 		foreach (KeyValuePair<Node, Djikstra> entry in navdata) {
 			if (entry.Value.IsEdgeSignificant(a_from, a_to)) {
@@ -154,11 +156,7 @@ public class Network : MonoBehaviour {
 
 	void Start () {
 		bc = GetComponent<BoxCollider>();
-		StartCoroutine(Calcit(4f));
-	}
-	IEnumerator Calcit(float waitTime) {
-		yield return new WaitForSeconds(waitTime);
-		UpdateDjikstra ();
+//		NS.Timer.setTimeout(UpdateDjikstra, 4000);
 	}
 
 	// Update is called once per frame

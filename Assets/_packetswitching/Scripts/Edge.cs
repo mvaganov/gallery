@@ -11,8 +11,10 @@ public class Edge : MonoBehaviour {
 	public Node Other(Node n){ return (n == a) ? b : (n == b) ? a : null; }
 	public bool Has(Node n){return n == a || n == b; }
 	public bool Has(Node nodea, Node nodeb){ return (nodea==a && nodeb==b) || (nodea==b && nodeb==a); }
+	public bool breakMe = false;
 	public void FixedUpdate() {
-		if (a == null || b == null) {
+		if (IsBroken() || breakMe) {
+			Break ();
 			Destroy (gameObject);
 			return;
 		}
