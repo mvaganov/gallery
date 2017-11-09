@@ -142,6 +142,7 @@ public class CmdLine : MonoBehaviour {
 	private TMPro.TMP_InputField tmpInputField;
 	/// <summary>used to prevent multiple simultaneous toggles of visibility</summary>
 	private bool togglingVisiblityWithMultitouch = false;
+	public float fontSize = 14;
 	[Tooltip ("If true, will show up and take user input immediately")]
 	public bool activeOnStart = true;
 	[Tooltip ("The TextMeshPro font used. If null, built-in-font should be used.")]
@@ -236,7 +237,7 @@ public class CmdLine : MonoBehaviour {
 		if (textMeshProFont != null) {
 			tmpText.font = textMeshProFont;
 		}
-		tmpText.fontSize = 14;
+		tmpText.fontSize = fontSize;
 		tmpText.transform.SetParent (tmpGo.transform);
 		tmpInputField.textComponent = tmpText;
 		tmpInputField.fontAsset = tmpText.font;

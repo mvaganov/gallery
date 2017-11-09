@@ -40,11 +40,11 @@ public class Voter : MonoBehaviour {
 				}
 			}
 			selected.transform.position = transform.TransformPoint (relativeOffset);
-			if (Input.GetButton ("Fire2") || Input.GetKeyDown (KeyCode.Escape)) {
+			if (Input.GetButtonDown ("Fire2") || Input.GetKeyDown (KeyCode.Escape)) {
 				selected.transform.position = originalPosition;
 				state = UIState.selecting;
 			}
-			if (Input.GetKeyDown (KeyCode.G) || Input.GetButton ("Fire1") || Input.GetKeyDown (KeyCode.Return)) {
+			if (Input.GetKeyDown (KeyCode.G) || Input.GetButtonDown ("Fire1") || Input.GetKeyDown (KeyCode.Return)) {
 				state = UIState.selecting;
 			}
 			break;
@@ -69,10 +69,10 @@ public class Voter : MonoBehaviour {
 						relativeOffset = transform.InverseTransformPoint (selected.transform.position);
 						state = UIState.grabbing;
 					}
-					if (Input.GetButton ("Fire1") || Input.GetAxis ("Mouse ScrollWheel") > 0) {
+					if (Input.GetButtonDown ("Fire1") || Input.GetAxis ("Mouse ScrollWheel") > 0) {
 						selected.AddVote (1);
 					}
-					if (Input.GetButton ("Fire2") || Input.GetAxis ("Mouse ScrollWheel") < 0) {
+					if (Input.GetButtonDown ("Fire2") || Input.GetAxis ("Mouse ScrollWheel") < 0) {
 						selected.AddVote (-1);
 					}
 					if (Input.GetKeyDown (KeyCode.Escape)) {

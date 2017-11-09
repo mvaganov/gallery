@@ -7,11 +7,9 @@ public class Portal : MonoBehaviour {
 	public Transform portalView;
 	public Camera exitCamera;
 	public UnityEngine.UI.RawImage portalImage;
-//	public Transform viewport;
 	public Transform exit;
 	RenderTexture renderTexture;
 	bool renderLogic = true;
-//	public float rotatePortalViewSpeed = 180;
 	Collider m_collider;
 
 	private bool IsSeen() {
@@ -42,14 +40,12 @@ public class Portal : MonoBehaviour {
 		exitCamera.nearClipPlane = dist;
 	}
 
-//	public float extraRatio = 6.63f;
 	void Start() {
 		RectTransform r = portalImage.GetComponent<RectTransform> ();
 		float distance = observer.nearClipPlane;
-		distance = Vector3.Distance (observer.transform.position, portalView.transform.position);
-		float ratio = 1 + observer.nearClipPlane * distance;
-//		RectTransform rt = portalView.GetComponent<RectTransform> ();
-		const float extraRatio = 6.63f; // TODO figure out why this number? it has to do with UI width/height...
+		//distance = Vector3.Distance (observer.transform.position, portalView.transform.position);
+		float ratio = 1 + observer.nearClipPlane;// * distance;
+		const float extraRatio = 30;//6.6f; // TODO figure out why this number? it has to do with UI width/height...
 		float 
 		w = Screen.width  * ratio * portalView.lossyScale.x * extraRatio, 
 		h = Screen.height * ratio * portalView.lossyScale.y * extraRatio;
@@ -79,7 +75,7 @@ public class Portal : MonoBehaviour {
 		}
 	}
 
-	public void OnTriggerEnter(Collider c) {
+	void OnTriggerEnter(Collider c) {
 		Vector3 offset = c.transform.position - transform.position;
 		c.transform.position = exit.position + offset;
 	}
