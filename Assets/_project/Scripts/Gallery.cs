@@ -61,7 +61,7 @@ public class Gallery : MonoBehaviour {
 		MeshFilter mf = obj.GetComponent<MeshFilter> ();
 		if (mf) {
 			Bounds b = mf.mesh.bounds;
-			print (name + " " + b+ " " +b.size.magnitude);//+ b);
+			//print (name + " " + b+ " " +b.size.magnitude);//+ b);
 			ResizeMesh (name, mf.mesh, -b.center, size/b.size.magnitude);
 			b = mf.mesh.bounds;
 		} else {

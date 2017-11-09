@@ -73,8 +73,13 @@ Temporary Items
 Assets/20*/
 
 # extra libraries
-Assets/TextMesh\ Pro/
-Assets/Standard\ Assets/
-Assets/OVR/
-Assets/Plugins/
+Assets/TextMesh\ Pro
+Assets/TextMesh\ Pro.meta
+Assets/Standard\ Assets
+Assets/Standard\ Assets.meta
+Assets/OVR
+Assets/OVR.meta
+Assets/Plugins
+Assets/Plugins.meta
 Assets/GoogleVR
+Assets/GoogleVR.meta
