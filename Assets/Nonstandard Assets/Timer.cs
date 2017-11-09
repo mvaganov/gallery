@@ -7,12 +7,12 @@ namespace NS {
 	public class Timer : MonoBehaviour {
 		[System.Serializable]
 		public class ToDo {
+			public string description;
 			public long when;
 			public System.Action what;
-			public string description;
 			public ToDo(long when, System.Action what, string description = null) {
-				this.when = when; this.what = what;
 				this.description = description != null ? description : what.Method.Name;
+				this.when = when; this.what = what;
 			}
 		}
 		/// <summary>using a List, which is contiguous memory, because it's faster than a liked list MOST of time, because of cache misses, and reasonable data loads</summary>
