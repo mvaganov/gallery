@@ -4,26 +4,61 @@ using UnityEngine;
 
 // NonStandard assets
 namespace NS {
-	public class Timer : MonoBehaviour {
+	public class Timer : Time {
+		[Tooltip("When to trigger")]
+		public float seconds = 1;
+		[Tooltip("Transform to teleport to\nSceneAsset to load a new scene\nAudioClip to play audio\nGameObject to SetActivate(true)")]
+		public Object whatToTrigger;
+		[Tooltip("If true, restart a timer after triggering")]
+		public bool repeat = false;
+
+		private void DoTimer() {
+			if (repeat) {
+				SetTimeout (DoTimer, (long)(seconds * 1000));
+			}
+			SetTimeout (whatToTrigger, (long)(seconds * 1000));
+		}
+
+		void Start() {
+			base.Init ();
+			if(whatToTrigger != null) { DoTimer(); }
+		}
+	}
+	
+	public class Time : MonoBehaviour {
 		[System.Serializable]
 		public class ToDo {
 			public string description;
 			public long when;
-			public System.Action what;
-			public ToDo(long when, System.Action what, string description = null) {
-				this.description = description != null ? description : what.Method.Name;
-				this.when = when; this.what = what;
+			public object what;
+			/// <summary>what could be a delegate, or an executable object, as executed by a Trigger</summary>
+			public ToDo(long when, object what, string description = null) {
+				if (description == null) {
+					if (typeof(System.Action).IsAssignableFrom(what.GetType())) {
+						System.Action a = what as System.Action;
+						description = a.Method.Name;
+					} else {
+						description = what.ToString();
+					}
+				}
+				this.description = description; this.when = when; this.what = what;
 			}
 		}
 		/// <summary>using a List, which is contiguous memory, because it's faster than a liked list MOST of time, because of cache misses, and reasonable data loads</summary>
 		public List<ToDo> queue = new List<ToDo>();
 		/// <summary>The singleton</summary>
-		private static Timer s_instance = null;
-		public static Timer Instance() {
+		private static NS.Time s_instance = null;
+		public static Time Instance() {
 			if (s_instance == null) {
-				if((s_instance = FindObjectOfType(typeof(Timer)) as Timer) == null) { // find the instance
-					GameObject g = new GameObject("<" + s_instance.GetType().Name + ">");
-					s_instance = g.AddComponent<Timer>(); // if there is no instance, create one
+				Object[] objs = FindObjectsOfType(typeof(NS.Time));  // find the instance
+				for (int i = 0; i < objs.Length; ++i) {
+					if (objs[i].GetType () == typeof(NS.Time)) {
+						s_instance = objs [i] as NS.Time; break;
+					}
+				}
+				if(s_instance == null) { // if it doesn't exist
+					GameObject g = new GameObject("<" + typeof(NS.Time).Name + ">");
+					s_instance = g.AddComponent<NS.Time>(); // create one
 				}
 			}
 			return s_instance;
@@ -49,36 +84,53 @@ namespace NS {
 			return index;
 		}
 
+		/// <summary>as the JavaScript function</summary>
+		/// <param name="action">Action. an object to trigger, expected to be a delegate or System.Action</param>
+		/// <param name="delayMilliseconds">Delay milliseconds.</param>
 		public void SetTimeout(System.Action action, long delayMilliseconds) {
+			SetTimeout ((object)action, delayMilliseconds);
+		}
+		/// <summary>as the JavaScript function</summary>
+		/// <param name="action">Action. an object to trigger, expected to be a delegate or System.Action</param>
+		/// <param name="delayMilliseconds">Delay milliseconds.</param>
+		public void SetTimeout(object action, long delayMilliseconds) {
 			long soon = Now () + delayMilliseconds;
 			queue.Insert(BestIndexFor (soon), new ToDo(soon, action));
 		}
 
+		public static void setTimeout(object action, long delayMilliseconds) {
+			setTimeout ((object)action, delayMilliseconds);
+		}
 		public static void setTimeout(System.Action action, long delayMilliseconds) {
 			Instance ().SetTimeout (action, delayMilliseconds);
 		}
 
 		void OnApplicationPause(bool paused) { if (alternativeTime == 0) { alternativeTime = Now (); } }
-		
-		void Start () {
+		void OnDisable() { OnApplicationPause (true); }
+		void OnEnable() { OnApplicationPause (false); }
+
+		protected void Init() {
 			#if UNITY_EDITOR
 			// This method is run whenever the playmode state is changed.
 			UnityEditor.EditorApplication.pauseStateChanged += (UnityEditor.PauseState ps) => {
 				if (ps == UnityEditor.PauseState.Paused && alternativeTime == 0) { alternativeTime = Now(); }
 			};
 			#endif
-			if (s_instance != null) { throw new System.Exception ("there should only be one timer!"); }
+		}
+
+		void Start () {
+			Init ();
+			if (s_instance != null && s_instance != this) { throw new System.Exception ("there should only be one timer!"); }
 			s_instance = this;
-			alternativeTime = 0;
 		}
 
 		void Update () {
 			long now;
 			if (alternativeTime == 0) {
 				now = Now ();
-				if (Time.timeScale != 1) { alternativeTime = now; }
+				if (UnityEngine.Time.timeScale != 1) { alternativeTime = now; }
 			} else {
-				float deltaTimeMs = (Time.deltaTime * 1000);
+				float deltaTimeMs = (UnityEngine.Time.deltaTime * 1000);
 				long deltaTimeMsLong = (long)(deltaTimeMs + leftOverTime);
 				alternativeTime += deltaTimeMsLong;
 				leftOverTime = deltaTimeMs - deltaTimeMsLong;
@@ -87,7 +139,7 @@ namespace NS {
 			while (queue.Count > 0 && queue [0].when <= now) {
 				ToDo todo = queue [0];
 				queue.RemoveAt (0);
-				todo.what.Invoke ();
+				Trigger.DoTrigger(gameObject, todo.what, gameObject);
 			}
 		}
 	}
