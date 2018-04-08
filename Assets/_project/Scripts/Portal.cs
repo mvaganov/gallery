@@ -62,14 +62,14 @@ public class Portal : MonoBehaviour {
 			Quaternion r = portalView.rotation;
 //			viewport.Rotate (0, 0, rotatePortalViewSpeed*Time.deltaTime);
 			portalView.rotation = r;
-			float epsilon = 1 / 1024.0f;
 			float distance = observer.nearClipPlane;
 			distance = Vector3.Distance (observer.transform.position, portalView.transform.position);
 			if (distance <= observer.nearClipPlane) {
+				const float epsilon = 1 / 1024.0f;
 				distance += epsilon;
 			}
+			// this is the right scale based on the particular width/height of the UI elements... not sure why.
 			portalImage.transform.localScale = Vector3.one * distance;
-//			new Vector3 (globalScale.x/transform.lossyScale.x, globalScale.y/transform.lossyScale.y, globalScale.z/transform.lossyScale.z);
 			portalImage.transform.position = observer.transform.position + observer.transform.forward * (distance);
 			portalImage.transform.rotation = observer.transform.rotation;
 		}

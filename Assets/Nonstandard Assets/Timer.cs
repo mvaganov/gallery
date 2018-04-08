@@ -98,9 +98,14 @@ namespace NS {
 			queue.Insert(BestIndexFor (soon), new ToDo(soon, action));
 		}
 
+		/// <param name="action">Action. what to do</param>
+		/// <param name="delayMilliseconds">Delay milliseconds. in how-many-milliseconds to do it</param>
 		public static void setTimeout(object action, long delayMilliseconds) {
 			setTimeout ((object)action, delayMilliseconds);
 		}
+		/// <summary>Allows implicit conversion of lambda expressions and delegates</summary>
+		/// <param name="action">Action. what to do</param>
+		/// <param name="delayMilliseconds">Delay milliseconds. in how-many-milliseconds to do it</param>
 		public static void setTimeout(System.Action action, long delayMilliseconds) {
 			Instance ().SetTimeout (action, delayMilliseconds);
 		}
@@ -110,12 +115,7 @@ namespace NS {
 		void OnEnable() { OnApplicationPause (false); }
 
 		protected void Init() {
-			#if UNITY_EDITOR
-			// This method is run whenever the playmode state is changed.
-			UnityEditor.EditorApplication.pauseStateChanged += (UnityEditor.PauseState ps) => {
-				if (ps == UnityEditor.PauseState.Paused && alternativeTime == 0) { alternativeTime = Now(); }
-			};
-			#endif
+			NS.Trigger.EquateUnityEditorPauseWithApplicationPause (OnApplicationPause);
 		}
 
 		void Start () {
@@ -139,7 +139,7 @@ namespace NS {
 			while (queue.Count > 0 && queue [0].when <= now) {
 				ToDo todo = queue [0];
 				queue.RemoveAt (0);
-				Trigger.DoTrigger(gameObject, todo.what, gameObject);
+				NS.Trigger.DoTrigger(gameObject, todo.what, gameObject);
 			}
 		}
 	}
